@@ -1038,6 +1038,7 @@ const _insertIntoVectorStoreWorkerThread = async (data: ICommonObject, isStrictS
         })
         const docs: Document[] = chunks.map((chunk: DocumentStoreFileChunk) => {
             return new Document({
+                id: chunk.id,
                 pageContent: chunk.pageContent,
                 metadata: JSON.parse(chunk.metadata)
             })

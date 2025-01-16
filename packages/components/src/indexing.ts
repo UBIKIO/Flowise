@@ -6,25 +6,16 @@ import { Document, DocumentInterface } from '@langchain/core/documents'
 import { BaseDocumentLoader } from 'langchain/document_loaders/base.js'
 import { IndexingResult } from './Interface'
 
-type Metadata = Record<string, unknown>
-
 type StringOrDocFunc = string | ((doc: DocumentInterface) => string)
 
 export interface HashedDocumentInterface extends DocumentInterface {
     uid: string
-    hash_?: string
+    hash_: string
     contentHash?: string
     metadataHash?: string
-    pageContent: string
-    metadata: Metadata
     calculateHashes(): void
     toDocument(): DocumentInterface
-}
-
-interface HashedDocumentArgs {
-    pageContent: string
-    metadata: Metadata
-    uid: string
+    isHashUid(): boolean
 }
 
 /**
@@ -32,23 +23,27 @@ interface HashedDocumentArgs {
  * Hashes are calculated based on page content and metadata.
  * It is used for indexing.
  */
-export class _HashedDocument implements HashedDocumentInterface {
-    uid: string
-
-    hash_?: string
+export class _HashedDocument extends Document implements HashedDocumentInterface {
+    private __hash_?: HashedDocumentInterface['hash_']
 
     contentHash?: string
 
     metadataHash?: string
 
-    pageContent: string
+    get uid() {
+        return this.id || this.hash_
+    }
 
-    metadata: Metadata
+    get hash_() {
+        if (!this.__hash_) {
+            this.calculateHashes()
+        }
 
-    constructor(fields: HashedDocumentArgs) {
-        this.uid = fields.uid
-        this.pageContent = fields.pageContent
-        this.metadata = fields.metadata
+        return this.__hash_!
+    }
+
+    isHashUid() {
+        return !this.id
     }
 
     calculateHashes(): void {
@@ -72,11 +67,7 @@ export class _HashedDocument implements HashedDocumentInterface {
             throw new Error(`Failed to hash metadata: ${e}. Please use a dict that can be serialized using json.`)
         }
 
-        this.hash_ = this._hashStringToUUID(this.contentHash + this.metadataHash)
-
-        if (!this.uid) {
-            this.uid = this.hash_
-        }
+        this.__hash_ = this._hashStringToUUID(this.contentHash + this.metadataHash)
     }
 
     toDocument(): DocumentInterface {
@@ -86,12 +77,8 @@ export class _HashedDocument implements HashedDocumentInterface {
         })
     }
 
-    static fromDocument(document: DocumentInterface, uid?: string): _HashedDocument {
-        const doc = new this({
-            pageContent: document.pageContent,
-            metadata: document.metadata,
-            uid: uid || (document as DocumentInterface & { uid: string }).uid
-        })
+    static fromDocument(document: DocumentInterface): _HashedDocument {
+        const doc = new this(document)
         doc.calculateHashes()
         return doc
     }
@@ -174,10 +161,6 @@ export function _deduplicateInOrder(hashedDocuments: HashedDocumentInterface[]):
     const deduplicated: HashedDocumentInterface[] = []
 
     for (const hashedDoc of hashedDocuments) {
-        if (!hashedDoc.hash_) {
-            throw new Error('Hashed document does not have a hash')
-        }
-
         if (!seen.has(hashedDoc.hash_)) {
             seen.add(hashedDoc.hash_)
             deduplicated.push(hashedDoc)
@@ -271,23 +254,53 @@ export async function index(args: IndexArgs): Promise<IndexingResult> {
             })
         }
 
-        const batchExists = await recordManager.exists(hashedDocs.map((doc) => doc.uid))
+        const [batchExistsByUid, batchExistsByHash] = await Promise.all([
+            recordManager.exists(hashedDocs.map((doc) => doc.uid)),
+            recordManager.exists(hashedDocs.map((doc) => doc.hash_))
+        ])
 
         const uids: string[] = []
         const docsToIndex: DocumentInterface[] = []
         const docsToUpdate: string[] = []
         const seenDocs = new Set<string>()
+
+        /**
+         * TODO: Find a way to check if document is really the right document or a collision due to hash id
+         **/
         hashedDocs.forEach((hashedDoc, i) => {
-            const docExists = batchExists[i]
-            if (docExists) {
+            const uidExists = batchExistsByUid[i]
+            const hashExists = batchExistsByHash[i]
+            let existingKey: string | undefined
+
+            // Is matched by UID only
+            if (uidExists && !hashExists) {
+                existingKey = hashedDoc.uid
+            }
+            // Is matched by Hash only
+            else if (!uidExists && hashExists) {
+                existingKey = hashedDoc.hash_
+            }
+            // Is matched by UID & Hash
+            else if (uidExists && hashExists) {
+                // Hash is not the UID, there is probably a collision of UID against a legacy Hash UID
+                if (!hashedDoc.isHashUid()) {
+                    throw Error(`Document UID collision detected with UID ${hashedDoc.uid}`)
+                }
+
+                // Hash is used as UID, that could be ok in some case (not using DocumentStore), but risky because of collisions
+                existingKey = hashedDoc.uid
+            }
+
+            if (existingKey) {
                 if (forceUpdate) {
-                    seenDocs.add(hashedDoc.uid)
+                    seenDocs.add(existingKey)
                 } else {
-                    docsToUpdate.push(hashedDoc.uid)
+                    docsToUpdate.push(existingKey)
                     return
                 }
             }
-            uids.push(hashedDoc.uid)
+
+            uids.push(existingKey || hashedDoc.uid)
             docsToIndex.push(hashedDoc.toDocument())
         })
 
