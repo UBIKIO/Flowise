@@ -1,10 +1,9 @@
-import { flatten } from 'lodash'
 import { Client, ClientOptions } from '@elastic/elasticsearch'
 import { Document } from '@langchain/core/documents'
 import { Embeddings } from '@langchain/core/embeddings'
 import { ElasticClientArgs, ElasticVectorSearch } from '@langchain/community/vectorstores/elasticsearch'
 import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { getBaseClasses, getCredentialData, getCredentialParam, sanitizeVectorStoreDocs } from '../../../src/utils'
 import { index } from '../../../src/indexing'
 
 class Elasticsearch_VectorStores implements INode {
@@ -122,13 +121,7 @@ class Elasticsearch_VectorStores implements INode {
             const recordManager = nodeData.inputs?.recordManager
 
             const docs = nodeData.inputs?.document as Document[]
-            const flattenDocs = docs && docs.length ? flatten(docs) : []
-            const finalDocs = []
-            for (let i = 0; i < flattenDocs.length; i += 1) {
-                if (flattenDocs[i] && flattenDocs[i].pageContent) {
-                    finalDocs.push(new Document(flattenDocs[i]))
-                }
-            }
+            const finalDocs = sanitizeVectorStoreDocs(docs, false, options.chatId)
 
             // The following code is a workaround for a bug (Langchain Issue #1589) in the underlying library.
             // Store does not support object in metadata and fail silently

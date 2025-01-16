@@ -7,7 +7,7 @@ import { z } from 'zod'
 import { DataSource } from 'typeorm'
 import { ICommonObject, IDatabaseEntity, IDocument, IMessage, INodeData, IVariable, MessageContentImageUrl } from './Interface'
 import { AES, enc } from 'crypto-js'
-import { omit } from 'lodash'
+import { omit, flatten } from 'lodash'
 import { AIMessage, HumanMessage, BaseMessage } from '@langchain/core/messages'
 import { Document } from '@langchain/core/documents'
 import { getFileFromStorage } from './storageUtils'
@@ -1145,4 +1145,20 @@ export const handleDocumentLoaderDocuments = async (loader: DocumentLoader, text
     }
 
     return docs
+}
+
+export const sanitizeVectorStoreDocs = (docs: Document[], isFileUploadEnabled: boolean, chatId: string) => {
+    const flattenDocs = docs && docs.length ? flatten(docs) : []
+    const finalDocs = []
+
+    for (let i = 0; i < flattenDocs.length; i += 1) {
+        if (flattenDocs[i] && flattenDocs[i].pageContent) {
+            if (isFileUploadEnabled && chatId) {
+                flattenDocs[i].metadata = { ...flattenDocs[i].metadata, [FLOWISE_CHATID]: chatId }
+            }
+            finalDocs.push(new Document(flattenDocs[i]))
+        }
+    }
+
+    return finalDocs
 }

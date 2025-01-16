@@ -1,9 +1,8 @@
 import path from 'path'
-import { flatten } from 'lodash'
 import { storageContextFromDefaults, serviceContextFromDefaults, VectorStoreIndex, Document } from 'llamaindex'
 import { Document as LCDocument } from 'langchain/document'
 import { INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getUserHome } from '../../../src'
+import { getUserHome, ICommonObject, sanitizeVectorStoreDocs } from '../../../src'
 
 class SimpleStoreUpsert_LlamaIndex_VectorStores implements INode {
     label: string
@@ -79,7 +78,7 @@ class SimpleStoreUpsert_LlamaIndex_VectorStores implements INode {
 
     //@ts-ignore
     vectorStoreMethods = {
-        async upsert(nodeData: INodeData): Promise<Partial<IndexingResult>> {
+        async upsert(nodeData: INodeData, options: ICommonObject): Promise<Partial<IndexingResult>> {
             const basePath = nodeData.inputs?.basePath as string
             const docs = nodeData.inputs?.document as LCDocument[]
             const embeddings = nodeData.inputs?.embeddings
@@ -89,11 +88,7 @@ class SimpleStoreUpsert_LlamaIndex_VectorStores implements INode {
             if (!basePath) filePath = path.join(getUserHome(), '.flowise', 'llamaindex')
             else filePath = basePath
 
-            const flattenDocs = docs && docs.length ? flatten(docs) : []
-            const finalDocs = []
-            for (let i = 0; i < flattenDocs.length; i += 1) {
-                finalDocs.push(new LCDocument(flattenDocs[i]))
-            }
+            const finalDocs = sanitizeVectorStoreDocs(docs, false, options.chatId)
 
             const llamadocs: Document[] = []
             for (const doc of finalDocs) {

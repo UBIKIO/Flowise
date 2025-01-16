@@ -1,10 +1,9 @@
-import { flatten } from 'lodash'
 import { Embeddings } from '@langchain/core/embeddings'
 import { Document } from '@langchain/core/documents'
 import { CouchbaseVectorStore, CouchbaseVectorStoreArgs } from '@langchain/community/vectorstores/couchbase'
 import { Cluster } from 'couchbase'
 import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { getBaseClasses, getCredentialData, getCredentialParam, sanitizeVectorStoreDocs } from '../../../src/utils'
 import { resolveVectorStoreOrRetriever } from '../VectorStoreUtils'
 
 class Couchbase_VectorStores implements INode {
@@ -140,14 +139,7 @@ class Couchbase_VectorStores implements INode {
 
             const docs = nodeData.inputs?.document as Document[]
 
-            const flattenDocs = docs && docs.length ? flatten(docs) : []
-            const finalDocs = []
-            for (let i = 0; i < flattenDocs.length; i += 1) {
-                if (flattenDocs[i] && flattenDocs[i].pageContent) {
-                    const document = new Document(flattenDocs[i])
-                    finalDocs.push(document)
-                }
-            }
+            const finalDocs = sanitizeVectorStoreDocs(docs, false, options.chatId)
 
             const couchbaseClient = await Cluster.connect(connectionString, {
                 username: databaseUsername,

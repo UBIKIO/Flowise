@@ -1,9 +1,8 @@
-import { flatten } from 'lodash'
 import { Embeddings } from '@langchain/core/embeddings'
 import { Document } from '@langchain/core/documents'
 import { AstraDBVectorStore, AstraLibArgs } from '@langchain/community/vectorstores/astradb'
 import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData } from '../../../src/utils'
+import { getBaseClasses, getCredentialData, sanitizeVectorStoreDocs } from '../../../src/utils'
 import { addMMRInputParams, resolveVectorStoreOrRetriever } from '../VectorStoreUtils'
 
 class Astra_VectorStores implements INode {
@@ -132,13 +131,7 @@ class Astra_VectorStores implements INode {
                 }
             }
 
-            const flattenDocs = docs && docs.length ? flatten(docs) : []
-            const finalDocs = []
-            for (let i = 0; i < flattenDocs.length; i += 1) {
-                if (flattenDocs[i] && flattenDocs[i].pageContent) {
-                    finalDocs.push(new Document(flattenDocs[i]))
-                }
-            }
+            const finalDocs = sanitizeVectorStoreDocs(docs, false, options.chatId)
 
             try {
                 await AstraDBVectorStore.fromDocuments(finalDocs, embeddings, astraConfig)

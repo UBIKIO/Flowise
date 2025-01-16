@@ -1,4 +1,3 @@
-import { flatten } from 'lodash'
 import { v4 as uuid } from 'uuid'
 import { QdrantClient } from '@qdrant/js-client-rest'
 import { VectorStoreRetrieverInput } from '@langchain/core/vectorstores'
@@ -6,7 +5,7 @@ import { Document } from '@langchain/core/documents'
 import { QdrantVectorStore, QdrantLibArgs } from '@langchain/qdrant'
 import { Embeddings } from '@langchain/core/embeddings'
 import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { FLOWISE_CHATID, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { FLOWISE_CHATID, getBaseClasses, getCredentialData, getCredentialParam, sanitizeVectorStoreDocs } from '../../../src/utils'
 import { index } from '../../../src/indexing'
 import { howToUseFileUpload } from '../VectorStoreUtils'
 
@@ -214,16 +213,7 @@ class Qdrant_VectorStores implements INode {
                 port: port
             })
 
-            const flattenDocs = docs && docs.length ? flatten(docs) : []
-            const finalDocs = []
-            for (let i = 0; i < flattenDocs.length; i += 1) {
-                if (flattenDocs[i] && flattenDocs[i].pageContent) {
-                    if (isFileUploadEnabled && options.chatId) {
-                        flattenDocs[i].metadata = { ...flattenDocs[i].metadata, [FLOWISE_CHATID]: options.chatId }
-                    }
-                    finalDocs.push(new Document(flattenDocs[i]))
-                }
-            }
+            const finalDocs = sanitizeVectorStoreDocs(docs, isFileUploadEnabled, options.chatId)
 
             const dbConfig: QdrantLibArgs = {
                 client,

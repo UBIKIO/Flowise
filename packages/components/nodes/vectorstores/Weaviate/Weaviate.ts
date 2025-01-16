@@ -1,10 +1,9 @@
-import { flatten } from 'lodash'
 import weaviate, { WeaviateClient, ApiKey } from 'weaviate-ts-client'
 import { WeaviateLibArgs, WeaviateStore } from '@langchain/weaviate'
 import { Document } from '@langchain/core/documents'
 import { Embeddings } from '@langchain/core/embeddings'
 import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { getBaseClasses, getCredentialData, getCredentialParam, sanitizeVectorStoreDocs } from '../../../src/utils'
 import { addMMRInputParams, resolveVectorStoreOrRetriever } from '../VectorStoreUtils'
 import { index } from '../../../src/indexing'
 import { VectorStore } from '@langchain/core/vectorstores'
@@ -161,13 +160,7 @@ class Weaviate_VectorStores implements INode {
 
             const client: WeaviateClient = weaviate.client(clientConfig)
 
-            const flattenDocs = docs && docs.length ? flatten(docs) : []
-            const finalDocs = []
-            for (let i = 0; i < flattenDocs.length; i += 1) {
-                if (flattenDocs[i] && flattenDocs[i].pageContent) {
-                    finalDocs.push(new Document(flattenDocs[i]))
-                }
-            }
+            const finalDocs = sanitizeVectorStoreDocs(docs, false, options.chatId)
 
             const obj: WeaviateLibArgs = {
                 //@ts-ignore

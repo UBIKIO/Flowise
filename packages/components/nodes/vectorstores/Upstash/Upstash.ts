@@ -1,6 +1,5 @@
-import { flatten } from 'lodash'
 import { IndexingResult, INode, INodeOutputsValue, INodeParams, INodeData, ICommonObject } from '../../../src/Interface'
-import { FLOWISE_CHATID, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { FLOWISE_CHATID, getBaseClasses, getCredentialData, getCredentialParam, sanitizeVectorStoreDocs } from '../../../src/utils'
 import { Embeddings } from '@langchain/core/embeddings'
 import { Document } from '@langchain/core/documents'
 import { UpstashVectorStore } from '@langchain/community/vectorstores/upstash'
@@ -123,16 +122,7 @@ class Upstash_VectorStores implements INode {
                 token: UPSTASH_VECTOR_REST_TOKEN
             })
 
-            const flattenDocs = docs && docs.length ? flatten(docs) : []
-            const finalDocs = []
-            for (let i = 0; i < flattenDocs.length; i += 1) {
-                if (flattenDocs[i] && flattenDocs[i].pageContent) {
-                    if (isFileUploadEnabled && options.chatId) {
-                        flattenDocs[i].metadata = { ...flattenDocs[i].metadata, [FLOWISE_CHATID]: options.chatId }
-                    }
-                    finalDocs.push(new Document(flattenDocs[i]))
-                }
-            }
+            const finalDocs = sanitizeVectorStoreDocs(docs, isFileUploadEnabled, options.chatId)
 
             const obj = {
                 index: upstashIndex

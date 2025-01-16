@@ -13,10 +13,9 @@ import {
     BaseEmbedding
 } from 'llamaindex'
 import { FetchResponse, Index, Pinecone, ScoredPineconeRecord } from '@pinecone-database/pinecone'
-import { flatten } from 'lodash'
 import { Document as LCDocument } from 'langchain/document'
 import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { flattenObject, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { flattenObject, getCredentialData, getCredentialParam, sanitizeVectorStoreDocs } from '../../../src/utils'
 
 class PineconeLlamaIndex_VectorStores implements INode {
     label: string
@@ -129,13 +128,7 @@ class PineconeLlamaIndex_VectorStores implements INode {
                 embedModel: embeddings
             })
 
-            const flattenDocs = docs && docs.length ? flatten(docs) : []
-            const finalDocs = []
-            for (let i = 0; i < flattenDocs.length; i += 1) {
-                if (flattenDocs[i] && flattenDocs[i].pageContent) {
-                    finalDocs.push(new LCDocument(flattenDocs[i]))
-                }
-            }
+            const finalDocs = sanitizeVectorStoreDocs(docs, false, options.chatId)
 
             const llamadocs: Document[] = []
             for (const doc of finalDocs) {

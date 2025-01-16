@@ -1,10 +1,9 @@
-import { flatten } from 'lodash'
 import { Client } from '@opensearch-project/opensearch'
 import { Document } from '@langchain/core/documents'
 import { OpenSearchVectorStore } from '@langchain/community/vectorstores/opensearch'
 import { Embeddings } from '@langchain/core/embeddings'
 import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { getBaseClasses, getCredentialData, getCredentialParam, sanitizeVectorStoreDocs } from '../../../src/utils'
 
 class OpenSearch_VectorStores implements INode {
     label: string
@@ -91,13 +90,7 @@ class OpenSearch_VectorStores implements INode {
 
             const client = getOpenSearchClient(opensearchURL, user, password)
 
-            const flattenDocs = docs && docs.length ? flatten(docs) : []
-            const finalDocs = []
-            for (let i = 0; i < flattenDocs.length; i += 1) {
-                if (flattenDocs[i] && flattenDocs[i].pageContent) {
-                    finalDocs.push(new Document(flattenDocs[i]))
-                }
-            }
+            const finalDocs = sanitizeVectorStoreDocs(docs, false, options.chatId)
 
             try {
                 await OpenSearchVectorStore.fromDocuments(finalDocs, embeddings, {

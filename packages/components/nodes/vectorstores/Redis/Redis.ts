@@ -1,10 +1,10 @@
-import { flatten, isEqual } from 'lodash'
+import { isEqual } from 'lodash'
 import { createClient, SearchOptions, RedisClientOptions } from 'redis'
 import { Embeddings } from '@langchain/core/embeddings'
 import { RedisVectorStore, RedisVectorStoreConfig } from '@langchain/community/vectorstores/redis'
 import { Document } from '@langchain/core/documents'
 import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { getBaseClasses, getCredentialData, getCredentialParam, sanitizeVectorStoreDocs } from '../../../src/utils'
 import { escapeAllStrings, escapeSpecialChars, unEscapeSpecialChars } from './utils'
 
 let redisClientSingleton: ReturnType<typeof createClient>
@@ -158,15 +158,9 @@ class Redis_VectorStores implements INode {
 
             const docs = nodeData.inputs?.document as Document[]
 
-            const flattenDocs = docs && docs.length ? flatten(docs) : []
-            const finalDocs = []
-            for (let i = 0; i < flattenDocs.length; i += 1) {
-                if (flattenDocs[i] && flattenDocs[i].pageContent) {
-                    const document = new Document(flattenDocs[i])
-                    escapeAllStrings(document.metadata)
-                    finalDocs.push(document)
-                }
-            }
+            const finalDocs = sanitizeVectorStoreDocs(docs, false, options.chatId)
+
+            finalDocs.forEach((doc) => escapeAllStrings(doc.metadata))
 
             try {
                 const redisClient = await getRedisClient({ url: redisUrl })

@@ -1,7 +1,6 @@
-import { flatten } from 'lodash'
 import { Document } from '@langchain/core/documents'
 import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { FLOWISE_CHATID, getBaseClasses } from '../../../src/utils'
+import { FLOWISE_CHATID, getBaseClasses, sanitizeVectorStoreDocs } from '../../../src/utils'
 import { index } from '../../../src/indexing'
 import { howToUseFileUpload } from '../VectorStoreUtils'
 import { VectorStore } from '@langchain/core/vectorstores'
@@ -201,17 +200,7 @@ class Postgres_VectorStores implements INode {
             const isFileUploadEnabled = nodeData.inputs?.fileUpload as boolean
             const vectorStoreDriver: VectorStoreDriver = Postgres_VectorStores.getDriverFromConfig(nodeData, options)
 
-            const flattenDocs = docs && docs.length ? flatten(docs) : []
-            const finalDocs = []
-
-            for (let i = 0; i < flattenDocs.length; i += 1) {
-                if (flattenDocs[i] && flattenDocs[i].pageContent) {
-                    if (isFileUploadEnabled && options.chatId) {
-                        flattenDocs[i].metadata = { ...flattenDocs[i].metadata, [FLOWISE_CHATID]: options.chatId }
-                    }
-                    finalDocs.push(new Document(flattenDocs[i]))
-                }
-            }
+            const finalDocs = sanitizeVectorStoreDocs(docs, isFileUploadEnabled, options.chatId)
 
             try {
                 if (recordManager) {

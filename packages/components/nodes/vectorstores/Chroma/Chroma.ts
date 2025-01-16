@@ -1,9 +1,8 @@
-import { flatten } from 'lodash'
 import { Chroma } from '@langchain/community/vectorstores/chroma'
 import { Embeddings } from '@langchain/core/embeddings'
 import { Document } from '@langchain/core/documents'
 import { ICommonObject, INode, INodeData, INodeOutputsValue, INodeParams, IndexingResult } from '../../../src/Interface'
-import { getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
+import { getBaseClasses, getCredentialData, getCredentialParam, sanitizeVectorStoreDocs } from '../../../src/utils'
 import { ChromaExtended } from './core'
 import { index } from '../../../src/indexing'
 
@@ -112,13 +111,7 @@ class Chroma_VectorStores implements INode {
             const credentialData = await getCredentialData(nodeData.credential ?? '', options)
             const chromaApiKey = getCredentialParam('chromaApiKey', credentialData, nodeData)
 
-            const flattenDocs = docs && docs.length ? flatten(docs) : []
-            const finalDocs = []
-            for (let i = 0; i < flattenDocs.length; i += 1) {
-                if (flattenDocs[i] && flattenDocs[i].pageContent) {
-                    finalDocs.push(new Document(flattenDocs[i]))
-                }
-            }
+            const finalDocs = sanitizeVectorStoreDocs(docs, false, options.chatId)
 
             const obj: {
                 collectionName: string
