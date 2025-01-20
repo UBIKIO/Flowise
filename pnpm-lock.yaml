@@ -8894,11 +8894,6 @@ packages:
     engines: {node: '>=0.10.0'}
     hasBin: true
 
-  ejs@3.1.9:
-    resolution: {integrity: sha512-rC+QVNMJWv+MtPgkt0y+0rVEIdbtxVADApW9JXrUVlzHetgcyczP/E7DJmWJ4fJCZF2cPcBk0laWO9ZHMG3DmQ==}
-    engines: {node: '>=0.10.0'}
-    hasBin: true
-
   electron-to-chromium@1.4.701:
     resolution: {integrity: sha512-K3WPQ36bUOtXg/1+69bFlFOvdSm0/0bGqmsfPDLRXLanoKXdA+pIWuf/VbA9b+2CwBFuONgl4NEz4OEm+OJOKA==}
 
@@ -22208,7 +22203,7 @@ snapshots:
       clean-stack: 3.0.1
       cli-progress: 3.12.0
       debug: 4.3.7(supports-color@8.1.1)
-      ejs: 3.1.9
+      ejs: 3.1.10
       get-package-type: 0.1.0
       globby: 11.1.0
       hyperlinker: 1.0.0
@@ -27937,10 +27932,6 @@ snapshots:
       jake: 10.8.7
 
   ejs@3.1.6:
-    dependencies:
-      jake: 10.8.7
-
-  ejs@3.1.9:
     dependencies:
       jake: 10.8.7
 
