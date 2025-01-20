@@ -291,26 +291,36 @@ export async function index(args: IndexArgs): Promise<IndexingResult> {
             docsToIndex.push(hashedDoc.toDocument())
         })
 
-        if (docsToUpdate.length > 0) {
-            await recordManager.update(docsToUpdate, { timeAtLeast: indexStartDt })
-            numSkipped += docsToUpdate.length
-        }
+        try {
+            if (docsToUpdate.length > 0) {
+                await recordManager.update(docsToUpdate, { timeAtLeast: indexStartDt })
+                numSkipped += docsToUpdate.length
+            }
 
-        if (docsToIndex.length > 0) {
-            await vectorStore.addDocuments(docsToIndex, { ids: uids })
-            const newDocs = docsToIndex.map((docs) => ({
-                pageContent: docs.pageContent,
-                metadata: docs.metadata
-            }))
-            addedDocs.push(...newDocs)
-            numAdded += docsToIndex.length - seenDocs.size
-            numUpdated += seenDocs.size
-        }
+            if (docsToIndex.length > 0) {
+                await vectorStore.addDocuments(docsToIndex, { ids: uids })
+                const newDocs = docsToIndex.map((docs) => ({
+                    pageContent: docs.pageContent,
+                    metadata: docs.metadata
+                }))
+                addedDocs.push(...newDocs)
+                numAdded += docsToIndex.length - seenDocs.size
+                numUpdated += seenDocs.size
+            }
 
-        await recordManager.update(
-            hashedDocs.map((doc) => doc.uid),
-            { timeAtLeast: indexStartDt, groupIds: sourceIds }
-        )
+            await recordManager.update(
+                hashedDocs.map((doc) => doc.uid),
+                { timeAtLeast: indexStartDt, groupIds: sourceIds }
+            )
+        } finally {
+            // Cleanup DB
+            const recordManagerKeys = await recordManager.listKeys({})
+            const missingUids = uids.filter((uid) => recordManagerKeys.includes(uid))
+
+            if (missingUids.length) {
+                vectorStore.delete({ id: missingUids })
+            }
+        }
 
         if (cleanup === 'incremental') {
             sourceIds.forEach((sourceId) => {
