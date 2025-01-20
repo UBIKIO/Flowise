@@ -317,8 +317,8 @@ export async function index(args: IndexArgs): Promise<IndexingResult> {
             const recordManagerKeys = await recordManager.listKeys({})
             const missingUids = uids.filter((uid) => !recordManagerKeys.includes(uid))
 
-            if (missingUids.length) {
-                vectorStore.delete({ id: missingUids })
+            if (missingUids.length > 0) {
+                await vectorStore.delete({ id: missingUids })
             }
         }
 
