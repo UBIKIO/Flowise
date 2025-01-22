@@ -247,6 +247,15 @@ export async function index(args: IndexArgs): Promise<IndexingResult> {
 
     const sourceIdAssigner = _getSourceIdAssigner(sourceIdKey ?? null)
 
+    const cleanupDB = async (uids: string[]) => {
+        const existingKeys = await recordManager.exists(uids)
+        const missingUids = uids.filter((uid, i) => !existingKeys[i])
+
+        if (missingUids.length > 0) {
+            await vectorStore.delete({ ids: missingUids })
+        }
+    }
+
     const indexStartDt = await recordManager.getTime()
     let numAdded = 0
     let addedDocs: Document[] = []
@@ -271,7 +280,11 @@ export async function index(args: IndexArgs): Promise<IndexingResult> {
             })
         }
 
-        const batchExists = await recordManager.exists(hashedDocs.map((doc) => doc.uid))
+        const docsUids = hashedDocs.map((doc) => doc.uid)
+
+        await cleanupDB(docsUids)
+
+        const batchExists = await recordManager.exists(docsUids)
 
         const uids: string[] = []
         const docsToIndex: DocumentInterface[] = []
@@ -308,18 +321,9 @@ export async function index(args: IndexArgs): Promise<IndexingResult> {
                 numUpdated += seenDocs.size
             }
 
-            await recordManager.update(
-                hashedDocs.map((doc) => doc.uid),
-                { timeAtLeast: indexStartDt, groupIds: sourceIds }
-            )
+            await recordManager.update(docsUids, { timeAtLeast: indexStartDt, groupIds: sourceIds })
         } finally {
-            // Cleanup DB
-            const existingKeys = await recordManager.exists(uids)
-            const missingUids = uids.filter((uid, i) => !existingKeys[i])
-
-            if (missingUids.length > 0) {
-                await vectorStore.delete({ ids: missingUids })
-            }
+            await cleanupDB(uids)
         }
 
         if (cleanup === 'incremental') {
