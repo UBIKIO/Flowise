@@ -98,7 +98,7 @@ export class TypeORMDriver extends VectorStoreDriver {
             if (ids?.length) {
                 try {
                     await instance.appDataSource.initialize()
-                    instance.appDataSource.getRepository(instance.documentEntity).delete(ids)
+                    await instance.appDataSource.getRepository(instance.documentEntity).delete(ids)
                 } catch (e) {
                     console.error('Failed to delete')
                 } finally {
@@ -111,7 +111,7 @@ export class TypeORMDriver extends VectorStoreDriver {
 
         instance.addVectors = async (vectors, documents) => {
             await instance.appDataSource.initialize()
-            const res = baseAddVectorsFn(vectors, this.sanitizeDocuments(documents))
+            const res = await baseAddVectorsFn(vectors, this.sanitizeDocuments(documents))
             await instance.appDataSource.destroy()
             return res
         }
