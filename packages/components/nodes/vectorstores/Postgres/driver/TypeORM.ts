@@ -116,6 +116,16 @@ export class TypeORMDriver extends VectorStoreDriver {
             return res
         }
 
+        const baseEnsureTableInDatabaseFn = instance.ensureTableInDatabase.bind(instance)
+
+        instance.ensureTableInDatabase = async () => {
+            await instance.appDataSource.initialize()
+            const res = await baseEnsureTableInDatabaseFn()
+            await instance.appDataSource.destroy()
+
+            return res
+        }
+
         return instance
     }
 
