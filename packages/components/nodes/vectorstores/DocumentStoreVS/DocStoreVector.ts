@@ -109,6 +109,19 @@ class DocStore_VectorStores implements INode {
             data.vectorStoreConfig = { ...vsConfig.config, ...data.inputs }
         }
 
+        if (additionalMetadataFilter) {
+            const vsMetadataFilterKey = Object.keys(data.vectorStoreConfig).find((key) => key.endsWith('MetadataFilter'))
+
+            if (vsMetadataFilterKey) {
+                data.vectorStoreConfig[vsMetadataFilterKey] = JSON.stringify({
+                    ...(typeof additionalMetadataFilter === 'object' ? additionalMetadataFilter : JSON.parse(additionalMetadataFilter)),
+                    ...(typeof data.vectorStoreConfig[vsMetadataFilterKey] === 'object'
+                        ? data.vectorStoreConfig[vsMetadataFilterKey]
+                        : JSON.parse(data.vectorStoreConfig[vsMetadataFilterKey]))
+                })
+            }
+        }
+
         // Prepare Vector Store Node Data
         const vStoreNodeData = _createVectorStoreNodeData(options.componentNodes, data, embeddingObj)
 
@@ -117,29 +130,6 @@ class DocStore_VectorStores implements INode {
         const retrieverOrVectorStore = await vectorStoreObj.init(vStoreNodeData, '', options)
         if (!retrieverOrVectorStore) {
             return { error: 'Failed to create vectorStore' }
-        }
-
-        if (additionalMetadataFilter) {
-            const [_vsMetadataFilterKey, vsMetadata] = (Object.entries(vsConfig).find(([key]) => key.endsWith('MetadataFilter')) || []) as [
-                string | undefined,
-                {} | undefined
-            ]
-
-            const baseSimilaritySearchVectorWithScore = retrieverOrVectorStore.similaritySearchVectorWithScore
-
-            retrieverOrVectorStore.similaritySearchVectorWithScore = async (query: number[], k: number, filter?: any) => {
-                return baseSimilaritySearchVectorWithScore(
-                    query,
-                    k,
-                    filter || additionalMetadataFilter
-                        ? {
-                              ...filter,
-                              ...additionalMetadataFilter,
-                              ...vsMetadata
-                          }
-                        : undefined
-                )
-            }
         }
 
         return retrieverOrVectorStore
