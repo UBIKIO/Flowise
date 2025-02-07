@@ -16,7 +16,7 @@ class DocStore_VectorStores implements INode {
     constructor() {
         this.label = 'Document Store (Vector)'
         this.name = 'documentStoreVS'
-        this.version = 1.0
+        this.version = 1.5
         this.type = 'DocumentStoreVS'
         this.icon = 'dstore.svg'
         this.category = 'Vector Stores'
@@ -28,6 +28,13 @@ class DocStore_VectorStores implements INode {
                 name: 'selectedStore',
                 type: 'asyncOptions',
                 loadMethod: 'listStores'
+            },
+            {
+                label: 'Additional Metadata Filter (Retriever)',
+                name: 'additionalMetadataFilter',
+                type: 'json',
+                additionalParams: true,
+                optional: true
             }
         ]
         this.outputs = [
@@ -75,6 +82,7 @@ class DocStore_VectorStores implements INode {
         const selectedStore = nodeData.inputs?.selectedStore as string
         const appDataSource = options.appDataSource as DataSource
         const databaseEntities = options.databaseEntities as IDatabaseEntity
+        const additionalMetadataFilter = (nodeData.inputs?.additionalMetadataFilter as Record<string, string>) || undefined
         const output = nodeData.outputs?.output as string
 
         const entity = await appDataSource.getRepository(databaseEntities['DocumentStore']).findOneBy({ id: selectedStore })
@@ -110,6 +118,30 @@ class DocStore_VectorStores implements INode {
         if (!retrieverOrVectorStore) {
             return { error: 'Failed to create vectorStore' }
         }
+
+        if (additionalMetadataFilter) {
+            const [_vsMetadataFilterKey, vsMetadata] = (Object.entries(vsConfig).find(([key]) => key.endsWith('MetadataFilter')) || []) as [
+                string | undefined,
+                {} | undefined
+            ]
+
+            const baseSimilaritySearchVectorWithScore = retrieverOrVectorStore.similaritySearchVectorWithScore
+
+            retrieverOrVectorStore.similaritySearchVectorWithScore = async (query: number[], k: number, filter?: any) => {
+                return baseSimilaritySearchVectorWithScore(
+                    query,
+                    k,
+                    filter || additionalMetadataFilter
+                        ? {
+                              ...filter,
+                              ...additionalMetadataFilter,
+                              ...vsMetadata
+                          }
+                        : undefined
+                )
+            }
+        }
+
         return retrieverOrVectorStore
     }
 }
