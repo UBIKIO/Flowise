@@ -235,6 +235,21 @@ importers:
       '@mistralai/mistralai':
         specifier: 0.1.3
         version: 0.1.3(encoding@0.1.13)
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.6.1
+        version: 1.9.0
+      '@modelcontextprotocol/server-brave-search':
+        specifier: ^0.6.2
+        version: 0.6.2
+      '@modelcontextprotocol/server-github':
+        specifier: ^2025.1.23
+        version: 2025.4.8
+      '@modelcontextprotocol/server-postgres':
+        specifier: ^0.6.2
+        version: 0.6.2
+      '@modelcontextprotocol/server-slack':
+        specifier: ^2025.1.17
+        version: 2025.1.17
       '@notionhq/client':
         specifier: ^2.2.8
         version: 2.2.14(encoding@0.1.13)
@@ -4237,6 +4252,29 @@ packages:
     resolution: {integrity: sha512-2y7U5riZq+cIjKpxGO9y417XuZv9CpBXEAvbjRMzWPGhXY7U1ZXj4VO4H9riS2kFZqTR2yLEKSE6/pGWVVIqgQ==}
     peerDependencies:
       zod: '>= 3'
+
+  '@modelcontextprotocol/sdk@1.0.1':
+    resolution: {integrity: sha512-slLdFaxQJ9AlRg+hw28iiTtGvShAOgOKXcD0F91nUcRYiOMuS9ZBYjcdNZRXW9G5JQ511GRTdUy1zQVZDpJ+4w==}
+
+  '@modelcontextprotocol/sdk@1.9.0':
+    resolution: {integrity: sha512-Jq2EUCQpe0iyO5FGpzVYDNFR6oR53AIrwph9yWl7uSc7IWUMsrmpmSaTGra5hQNunXpM+9oit85p924jWuHzUA==}
+    engines: {node: '>=18'}
+
+  '@modelcontextprotocol/server-brave-search@0.6.2':
+    resolution: {integrity: sha512-AtdnPh8zVsEooXWZD21Negz3JL6iRmKf4sUtwCrLe0e83QBJD6Hf5B3rOFkwsrnTew/6xL7oyRkhc6YuXhuuhQ==}
+    hasBin: true
+
+  '@modelcontextprotocol/server-github@2025.4.8':
+    resolution: {integrity: sha512-8N43bQw9MlUB0piTZHK2JMh8kYPKxH57d4Z7Wb8PS4by2MkZ0FzI5xPImg3xumpev82VZw2VWHQJJJYp+WkwEw==}
+    hasBin: true
+
+  '@modelcontextprotocol/server-postgres@0.6.2':
+    resolution: {integrity: sha512-ukbVmVxLAsdZ5pTVWbhf9fc7lqkSf7XqizNH8XAotI21GnRPtkqO+WLWpeBFU+/2Fyv63uXS7/9NnR8Y8wOP1Q==}
+    hasBin: true
+
+  '@modelcontextprotocol/server-slack@2025.1.17':
+    resolution: {integrity: sha512-JTP/GdbZnTj8rC2KeVBpwsQLP6R7rt26M01cMt8SPgVy18vsTogjDEotQYjYv0b8ga4EgPLWzJhiKbpn81zOKg==}
+    hasBin: true
 
   '@mongodb-js/saslprep@1.1.5':
     resolution: {integrity: sha512-XLNOMH66KhJzUJNwT/qlMnS4WsNDWD5ASdyaSH3EtK+F4r/CFGa3jT4GNi4mfOitGvWXtdLgQJkQjxSVrio+jA==}
@@ -9451,6 +9489,14 @@ packages:
     resolution: {integrity: sha512-v0eOBUbiaFojBu2s2NPBfYUoRR9GjcDNvCXVaqEf5vVfpIAh9f8RCo4vXTP8c63QRKCFwoLpMpTdPwwhEKVgzA==}
     engines: {node: '>=14.18'}
 
+  eventsource-parser@3.0.1:
+    resolution: {integrity: sha512-VARTJ9CYeuQYb0pZEPbzi740OWFgpHe7AYJ2WFZVnUDUQp5Dk2yJUgF36YsZ81cOyxT0QxmXD2EQpapAouzWVA==}
+    engines: {node: '>=18.0.0'}
+
+  eventsource@3.0.6:
+    resolution: {integrity: sha512-l19WpE2m9hSuyP06+FbuUUf1G+R0SFLrtQfbRb9PRr+oimOfxQhgGCbVaXg5IvZyyTThJsxh6L/srkMiCeBPDA==}
+    engines: {node: '>=18.0.0'}
+
   exa-js@1.0.12:
     resolution: {integrity: sha512-4oDvjl1966qy1BwjuGm/q/k2gZomS8WhpcuiXyn672cTmEfaRIwQnAbXBznuqzT1WaWeHfJXGTeeboaW41OCiw==}
 
@@ -9512,6 +9558,12 @@ packages:
     engines: {node: '>= 14'}
     peerDependencies:
       express: ^4 || ^5
+
+  express-rate-limit@7.5.0:
+    resolution: {integrity: sha512-eB5zbQh5h+VenMPM3fh+nw1YExi5nMr6HUCR62ELSP11huvxm/Uir1H1QEyTkk5QX6A58pX6NmaTMceKZ0Eodg==}
+    engines: {node: '>= 16'}
+    peerDependencies:
+      express: ^4.11 || 5 || ^5.0.0-beta.1
 
   express@4.17.1:
     resolution: {integrity: sha512-mHJ9O79RqluphRrcw2X/GTh3k9tVv8YcoyY4Kkh4WDMUYKRZUq0h1o0w2rrrxBqM7VoeUVqgb27xlEMXTnYt4g==}
@@ -13298,6 +13350,9 @@ packages:
   pg-connection-string@2.6.4:
     resolution: {integrity: sha512-v+Z7W/0EO707aNMaAEfiGnGL9sxxumwLl2fJvCQtMn9Fxsg+lPpPkdcyBSv/KFgpGdYkMfn+EI1Or2EHjpgLCA==}
 
+  pg-connection-string@2.7.0:
+    resolution: {integrity: sha512-PI2W9mv53rXJQEOb8xNR8lH7Hr+EKa6oJa38zsK0S/ky2er16ios1wLKhZyxzD7jUReiWokc9WK5nxSnC7W1TA==}
+
   pg-int8@1.0.1:
     resolution: {integrity: sha512-WCtabS6t3c8SkpDBUlb1kjOs7l66xsGdKpIPZsg4wR+B3+u9UAum2odSsF9tnvxg80h4ZxLWMy4pRjOsFIqQpw==}
     engines: {node: '>=4.0.0'}
@@ -13316,11 +13371,19 @@ packages:
     peerDependencies:
       pg: '>=8.0'
 
+  pg-pool@3.8.0:
+    resolution: {integrity: sha512-VBw3jiVm6ZOdLBTIcXLNdSotb6Iy3uOCwDGFAksZCXmi10nyRvnP2v3jl4d+IsLYRyXf6o9hIm/ZtUzlByNUdw==}
+    peerDependencies:
+      pg: '>=8.0'
+
   pg-protocol@1.6.0:
     resolution: {integrity: sha512-M+PDm637OY5WM307051+bsDia5Xej6d9IR4GwJse1qA1DIhiKlksvrneZOYQq42OM+spubpcNYEo2FcKQrDk+Q==}
 
   pg-protocol@1.6.1:
     resolution: {integrity: sha512-jPIlvgoD63hrEuihvIg+tJhoGjUsLPn6poJY9N5CnlPd91c2T18T/9zBtLxZSb1EhYxBRoZJtzScCaWlYLtktg==}
+
+  pg-protocol@1.8.0:
+    resolution: {integrity: sha512-jvuYlEkL03NRvOoyoRktBK7+qU5kOvlAwvmrH8sr3wbLrOdVWsRxQfz8mMy9sZFsqJ1hEWNfdWKI4SAmoL+j7g==}
 
   pg-types@2.2.0:
     resolution: {integrity: sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA==}
@@ -13341,6 +13404,15 @@ packages:
 
   pg@8.11.5:
     resolution: {integrity: sha512-jqgNHSKL5cbDjFlHyYsCXmQDrfIX/3RsNwYqpd4N0Kt8niLuNoRNH+aazv6cOd43gPh9Y4DjQCtb+X0MH0Hvnw==}
+    engines: {node: '>= 8.0.0'}
+    peerDependencies:
+      pg-native: '>=3.0.1'
+    peerDependenciesMeta:
+      pg-native:
+        optional: true
+
+  pg@8.14.1:
+    resolution: {integrity: sha512-0TdbqfjwIun9Fm/r89oB7RFQ0bLgduAhiIqIXOsyKoiC/L54DbuAAzIEN/9Op0f1Po9X7iCPXGoa/Ah+2aI8Xw==}
     engines: {node: '>= 8.0.0'}
     peerDependencies:
       pg-native: '>=3.0.1'
@@ -13403,6 +13475,10 @@ packages:
   pirates@4.0.6:
     resolution: {integrity: sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==}
     engines: {node: '>= 6'}
+
+  pkce-challenge@5.0.0:
+    resolution: {integrity: sha512-ueGLflrrnvwB3xuo/uGob5pd5FN7l0MsLf0Z87o/UQmRtwjvfylfc9MurIxRAWywCYTgrvpXBcqjV4OfCYGCIQ==}
+    engines: {node: '>=16.20.0'}
 
   pkg-dir@4.2.0:
     resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==}
@@ -16318,6 +16394,9 @@ packages:
 
   universal-user-agent@6.0.1:
     resolution: {integrity: sha512-yCzhz6FN2wU1NiiQRogkTQszlQSlpWaw8SvVegAc+bDxbzHgh1vX8uIe8OYyMH6DwH+sdTJsgMl36+mSMdRJIQ==}
+
+  universal-user-agent@7.0.2:
+    resolution: {integrity: sha512-0JCqzSKnStlRRQfCdowvqy3cy0Dvtlb8xecj/H8JFZuCze4rwjPZQOgvFvn0Ws/usCHQFGpyr+pB9adaGwXn4Q==}
 
   universalify@0.1.2:
     resolution: {integrity: sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==}
@@ -21342,7 +21421,7 @@ snapshots:
   '@jest/console@28.1.3':
     dependencies:
       '@jest/types': 28.1.3
-      '@types/node': 20.12.12
+      '@types/node': 22.14.0
       chalk: 4.1.2
       jest-message-util: 28.1.3
       jest-util: 28.1.3
@@ -21389,7 +21468,7 @@ snapshots:
     dependencies:
       '@jest/fake-timers': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.14.0
       jest-mock: 27.5.1
 
   '@jest/expect-utils@29.7.0':
@@ -21400,7 +21479,7 @@ snapshots:
     dependencies:
       '@jest/types': 27.5.1
       '@sinonjs/fake-timers': 8.1.0
-      '@types/node': 20.12.12
+      '@types/node': 22.14.0
       jest-message-util: 27.5.1
       jest-mock: 27.5.1
       jest-util: 27.5.1
@@ -21520,7 +21599,7 @@ snapshots:
       '@jest/schemas': 29.6.3
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 20.12.12
+      '@types/node': 22.14.0
       '@types/yargs': 17.0.32
       chalk: 4.1.2
 
@@ -22019,6 +22098,52 @@ snapshots:
   '@mistralai/mistralai@1.3.6(zod@3.23.8)':
     dependencies:
       zod: 3.23.8
+
+  '@modelcontextprotocol/sdk@1.0.1':
+    dependencies:
+      content-type: 1.0.5
+      raw-body: 3.0.0
+      zod: 3.24.2
+
+  '@modelcontextprotocol/sdk@1.9.0':
+    dependencies:
+      content-type: 1.0.5
+      cors: 2.8.5
+      cross-spawn: 7.0.6
+      eventsource: 3.0.6
+      express: 5.1.0
+      express-rate-limit: 7.5.0(express@5.1.0)
+      pkce-challenge: 5.0.0
+      raw-body: 3.0.0
+      zod: 3.24.2
+      zod-to-json-schema: 3.24.1(zod@3.24.2)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@modelcontextprotocol/server-brave-search@0.6.2':
+    dependencies:
+      '@modelcontextprotocol/sdk': 1.0.1
+
+  '@modelcontextprotocol/server-github@2025.4.8':
+    dependencies:
+      '@modelcontextprotocol/sdk': 1.0.1
+      '@types/node': 22.14.0
+      '@types/node-fetch': 2.6.12
+      node-fetch: 3.3.2
+      universal-user-agent: 7.0.2
+      zod: 3.22.4
+      zod-to-json-schema: 3.24.1(zod@3.22.4)
+
+  '@modelcontextprotocol/server-postgres@0.6.2':
+    dependencies:
+      '@modelcontextprotocol/sdk': 1.0.1
+      pg: 8.14.1
+    transitivePeerDependencies:
+      - pg-native
+
+  '@modelcontextprotocol/server-slack@2025.1.17':
+    dependencies:
+      '@modelcontextprotocol/sdk': 1.0.1
 
   '@mongodb-js/saslprep@1.1.5':
     dependencies:
@@ -25147,7 +25272,7 @@ snapshots:
 
   '@types/resolve@1.17.1':
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.14.0
 
   '@types/responselike@1.0.3':
     dependencies:
@@ -28733,6 +28858,12 @@ snapshots:
 
   eventsource-parser@1.1.2: {}
 
+  eventsource-parser@3.0.1: {}
+
+  eventsource@3.0.6:
+    dependencies:
+      eventsource-parser: 3.0.1
+
   exa-js@1.0.12(encoding@0.1.13):
     dependencies:
       cross-fetch: 4.0.0(encoding@0.1.13)
@@ -28833,6 +28964,10 @@ snapshots:
   express-rate-limit@6.11.2(express@4.18.3):
     dependencies:
       express: 4.18.3
+
+  express-rate-limit@7.5.0(express@5.1.0):
+    dependencies:
+      express: 5.1.0
 
   express@4.17.1:
     dependencies:
@@ -30938,7 +31073,7 @@ snapshots:
       '@jest/environment': 27.5.1
       '@jest/test-result': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.14.0
       chalk: 4.1.2
       co: 4.6.0
       dedent: 0.7.0
@@ -31043,7 +31178,7 @@ snapshots:
       '@jest/environment': 27.5.1
       '@jest/fake-timers': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.14.0
       jest-mock: 27.5.1
       jest-util: 27.5.1
       jsdom: 16.7.0(bufferutil@4.0.8)(canvas@2.11.2(encoding@0.1.13))
@@ -31058,7 +31193,7 @@ snapshots:
       '@jest/environment': 27.5.1
       '@jest/fake-timers': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.14.0
       jest-mock: 27.5.1
       jest-util: 27.5.1
 
@@ -31089,7 +31224,7 @@ snapshots:
       '@jest/source-map': 27.5.1
       '@jest/test-result': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.14.0
       chalk: 4.1.2
       co: 4.6.0
       expect: 27.5.1
@@ -31163,7 +31298,7 @@ snapshots:
   jest-mock@27.5.1:
     dependencies:
       '@jest/types': 27.5.1
-      '@types/node': 20.12.12
+      '@types/node': 22.14.0
 
   jest-pnp-resolver@1.2.3(jest-resolve@27.5.1):
     optionalDependencies:
@@ -31303,7 +31438,7 @@ snapshots:
   jest-util@29.7.0:
     dependencies:
       '@jest/types': 29.6.3
-      '@types/node': 20.12.12
+      '@types/node': 22.14.0
       chalk: 4.1.2
       ci-info: 3.9.0
       graceful-fs: 4.2.11
@@ -31352,7 +31487,7 @@ snapshots:
 
   jest-worker@26.6.2:
     dependencies:
-      '@types/node': 20.12.12
+      '@types/node': 22.14.0
       merge-stream: 2.0.0
       supports-color: 7.2.0
 
@@ -33985,6 +34120,8 @@ snapshots:
 
   pg-connection-string@2.6.4: {}
 
+  pg-connection-string@2.7.0: {}
+
   pg-int8@1.0.1: {}
 
   pg-numeric@1.0.2: {}
@@ -33997,9 +34134,15 @@ snapshots:
     dependencies:
       pg: 8.11.5
 
+  pg-pool@3.8.0(pg@8.14.1):
+    dependencies:
+      pg: 8.14.1
+
   pg-protocol@1.6.0: {}
 
   pg-protocol@1.6.1: {}
+
+  pg-protocol@1.8.0: {}
 
   pg-types@2.2.0:
     dependencies:
@@ -34041,6 +34184,16 @@ snapshots:
     optionalDependencies:
       pg-cloudflare: 1.1.1
 
+  pg@8.14.1:
+    dependencies:
+      pg-connection-string: 2.7.0
+      pg-pool: 3.8.0(pg@8.14.1)
+      pg-protocol: 1.8.0
+      pg-types: 2.2.0
+      pgpass: 1.0.5
+    optionalDependencies:
+      pg-cloudflare: 1.1.1
+
   pgpass@1.0.5:
     dependencies:
       split2: 4.2.0
@@ -34074,6 +34227,8 @@ snapshots:
   pinkie@2.0.4: {}
 
   pirates@4.0.6: {}
+
+  pkce-challenge@5.0.0: {}
 
   pkg-dir@4.2.0:
     dependencies:
@@ -37550,6 +37705,8 @@ snapshots:
       unist-util-visit-parents: 6.0.1
 
   universal-user-agent@6.0.1: {}
+
+  universal-user-agent@7.0.2: {}
 
   universalify@0.1.2: {}
 
