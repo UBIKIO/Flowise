@@ -247,6 +247,9 @@ importers:
       '@modelcontextprotocol/server-postgres':
         specifier: ^0.6.2
         version: 0.6.2
+      '@modelcontextprotocol/server-sequential-thinking':
+        specifier: ^0.6.2
+        version: 0.6.2
       '@modelcontextprotocol/server-slack':
         specifier: ^2025.1.17
         version: 2025.1.17
@@ -4253,6 +4256,9 @@ packages:
     peerDependencies:
       zod: '>= 3'
 
+  '@modelcontextprotocol/sdk@0.5.0':
+    resolution: {integrity: sha512-RXgulUX6ewvxjAG0kOpLMEdXXWkzWgaoCGaA2CwNW7cQCIphjpJhjpHSiaPdVCnisjRF/0Cm9KWHUuIoeiAblQ==}
+
   '@modelcontextprotocol/sdk@1.0.1':
     resolution: {integrity: sha512-slLdFaxQJ9AlRg+hw28iiTtGvShAOgOKXcD0F91nUcRYiOMuS9ZBYjcdNZRXW9G5JQ511GRTdUy1zQVZDpJ+4w==}
 
@@ -4270,6 +4276,10 @@ packages:
 
   '@modelcontextprotocol/server-postgres@0.6.2':
     resolution: {integrity: sha512-ukbVmVxLAsdZ5pTVWbhf9fc7lqkSf7XqizNH8XAotI21GnRPtkqO+WLWpeBFU+/2Fyv63uXS7/9NnR8Y8wOP1Q==}
+    hasBin: true
+
+  '@modelcontextprotocol/server-sequential-thinking@0.6.2':
+    resolution: {integrity: sha512-CgYRG6PPPldPk60Oi/jmPNKQ8hUg1V2rqlBRWsRvB5/QIgb+kyd6dySh0WfEoWC5kT+7avM2qDD8SKEBBHRkOQ==}
     hasBin: true
 
   '@modelcontextprotocol/server-slack@2025.1.17':
@@ -22099,6 +22109,12 @@ snapshots:
     dependencies:
       zod: 3.23.8
 
+  '@modelcontextprotocol/sdk@0.5.0':
+    dependencies:
+      content-type: 1.0.5
+      raw-body: 3.0.0
+      zod: 3.24.2
+
   '@modelcontextprotocol/sdk@1.0.1':
     dependencies:
       content-type: 1.0.5
@@ -22140,6 +22156,12 @@ snapshots:
       pg: 8.14.1
     transitivePeerDependencies:
       - pg-native
+
+  '@modelcontextprotocol/server-sequential-thinking@0.6.2':
+    dependencies:
+      '@modelcontextprotocol/sdk': 0.5.0
+      chalk: 5.3.0
+      yargs: 17.7.2
 
   '@modelcontextprotocol/server-slack@2025.1.17':
     dependencies:
