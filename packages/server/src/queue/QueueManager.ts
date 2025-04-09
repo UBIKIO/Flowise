@@ -121,6 +121,7 @@ export class QueueManager {
         })
         this.registerQueue('upsert', upsertionQueue)
 
+        // @ts-ignore
         const bullboard = createBullBoard([new BullMQAdapter(predictionQueue.getQueue()), new BullMQAdapter(upsertionQueue.getQueue())])
         this.bullBoardRouter = bullboard.router
     }
