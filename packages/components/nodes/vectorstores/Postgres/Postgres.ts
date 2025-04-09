@@ -6,7 +6,6 @@ import { index } from '../../../src/indexing'
 import { howToUseFileUpload } from '../VectorStoreUtils'
 import { VectorStore } from '@langchain/core/vectorstores'
 import { VectorStoreDriver } from './driver/Base'
-import { TypeORMDriver } from './driver/TypeORM'
 import { PGVectorDriver } from './driver/PGVector'
 import { getContentColumnName, getDatabase, getHost, getPort, getTableName } from './utils'
 
@@ -119,25 +118,25 @@ class Postgres_VectorStores implements INode {
                 additionalParams: true,
                 optional: true
             },
-            {
-                label: 'Driver',
-                name: 'driver',
-                type: 'options',
-                default: 'typeorm',
-                description: 'Different option to connect to Postgres',
-                options: [
-                    {
-                        label: 'TypeORM',
-                        name: 'typeorm'
-                    },
-                    {
-                        label: 'PGVector',
-                        name: 'pgvector'
-                    }
-                ],
-                optional: true,
-                additionalParams: true
-            },
+            // {
+            //     label: 'Driver',
+            //     name: 'driver',
+            //     type: 'options',
+            //     default: 'typeorm',
+            //     description: 'Different option to connect to Postgres',
+            //     options: [
+            //         {
+            //             label: 'TypeORM',
+            //             name: 'typeorm'
+            //         },
+            //         {
+            //             label: 'PGVector',
+            //             name: 'pgvector'
+            //         }
+            //     ],
+            //     optional: true,
+            //     additionalParams: true
+            // },
             {
                 label: 'Distance Strategy',
                 name: 'distanceStrategy',
@@ -332,14 +331,14 @@ class Postgres_VectorStores implements INode {
     }
 
     static getDriverFromConfig(nodeData: INodeData, options: ICommonObject): VectorStoreDriver {
-        switch (nodeData.inputs?.driver) {
-            case 'typeorm':
-                return new TypeORMDriver(nodeData, options)
-            case 'pgvector':
-                return new PGVectorDriver(nodeData, options)
-            default:
-                return new TypeORMDriver(nodeData, options)
-        }
+        // switch (nodeData.inputs?.driver) {
+        //     case 'typeorm':
+        //         return new TypeORMDriver(nodeData, options)
+        //     case 'pgvector':
+        return new PGVectorDriver(nodeData, options)
+        //     default:
+        //         return new TypeORMDriver(nodeData, options)
+        // }
     }
 }
 
