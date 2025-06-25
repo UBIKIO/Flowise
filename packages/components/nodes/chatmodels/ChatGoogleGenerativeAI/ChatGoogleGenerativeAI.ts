@@ -4,7 +4,8 @@ import { BaseCache } from '@langchain/core/caches'
 import { ICommonObject, IMultiModalOption, INode, INodeData, INodeOptionsValue, INodeParams } from '../../../src/Interface'
 import { convertMultiOptionsToStringArray, getBaseClasses, getCredentialData, getCredentialParam } from '../../../src/utils'
 import { getModels, MODEL_TYPE } from '../../../src/modelLoader'
-import { ChatGoogleGenerativeAI, GoogleGenerativeAIChatInput } from './FlowiseChatGoogleGenerativeAI'
+import { ChatGoogleGenerativeAI } from './FlowiseChatGoogleGenerativeAI'
+import { GoogleGenerativeAIChatInput } from '@langchain/google-genai'
 
 class GoogleGenerativeAI_ChatModels implements INode {
     label: string
@@ -55,7 +56,8 @@ class GoogleGenerativeAI_ChatModels implements INode {
                 type: 'string',
                 placeholder: 'gemini-1.5-pro-exp-0801',
                 description: 'Custom model name to use. If provided, it will override the model selected',
-                additionalParams: true
+                additionalParams: true,
+                optional: true
             },
             {
                 label: 'Temperature',
@@ -157,6 +159,14 @@ class GoogleGenerativeAI_ChatModels implements INode {
                 additionalParams: true
             },
             {
+                label: 'Base URL',
+                name: 'baseUrl',
+                type: 'string',
+                description: 'Base URL for the API. Leave empty to use the default.',
+                optional: true,
+                additionalParams: true
+            },
+            {
                 label: 'Allow Image Uploads',
                 name: 'allowImageUploads',
                 type: 'boolean',
@@ -189,20 +199,26 @@ class GoogleGenerativeAI_ChatModels implements INode {
         const harmBlockThreshold = nodeData.inputs?.harmBlockThreshold as string
         const cache = nodeData.inputs?.cache as BaseCache
         const streaming = nodeData.inputs?.streaming as boolean
+        const baseUrl = nodeData.inputs?.baseUrl as string | undefined
 
         const allowImageUploads = nodeData.inputs?.allowImageUploads as boolean
 
-        const obj: Partial<GoogleGenerativeAIChatInput> = {
+        const obj: GoogleGenerativeAIChatInput = {
             apiKey: apiKey,
-            modelName: customModelName || modelName,
+            model: customModelName || modelName,
             streaming: streaming ?? true
         }
 
+        // this extra metadata is needed, as langchain does not show the model name in the callbacks.
+        obj.metadata = {
+            fw_model_name: customModelName || modelName
+        }
         if (maxOutputTokens) obj.maxOutputTokens = parseInt(maxOutputTokens, 10)
         if (topP) obj.topP = parseFloat(topP)
         if (topK) obj.topK = parseFloat(topK)
         if (cache) obj.cache = cache
         if (temperature) obj.temperature = parseFloat(temperature)
+        if (baseUrl) obj.baseUrl = baseUrl
 
         // Safety Settings
         let harmCategories: string[] = convertMultiOptionsToStringArray(harmCategory)
