@@ -1,39 +1,35 @@
+import { cloneDeep } from 'lodash'
 import PropTypes from 'prop-types'
 import { useContext, useEffect, useRef, useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Handle, Position, useUpdateNodeInternals } from 'reactflow'
-import { useEffect, useRef, useState, useContext } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { cloneDeep } from 'lodash'
 import showdown from 'showdown'
 
 // material-ui
-import { useTheme, styled } from '@mui/material/styles'
-import {
-    Popper,
-    Box,
-    Typography,
-    Tooltip,
-    IconButton,
-    Button,
-    TextField,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions
-} from '@mui/material'
-import { useGridApiContext } from '@mui/x-data-grid'
+import { Tabs } from '@mui/base/Tabs'
 import IconAutoFixHigh from '@mui/icons-material/AutoFixHigh'
-import { Box, Button, IconButton, Popper, TextField, Tooltip, Typography } from '@mui/material'
+import {
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    IconButton,
+    Popper,
+    TextField,
+    Tooltip,
+    Typography
+} from '@mui/material'
 import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete'
 import { styled, useTheme } from '@mui/material/styles'
 import { tooltipClasses } from '@mui/material/Tooltip'
-import { IconWand, IconVariable, IconArrowsMaximize, IconEdit, IconAlertTriangle, IconBulb, IconRefresh, IconX } from '@tabler/icons-react'
-import { Tabs } from '@mui/base/Tabs'
-import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete'
+import { useGridApiContext } from '@mui/x-data-grid'
+import { IconAlertTriangle, IconArrowsMaximize, IconBulb, IconEdit, IconRefresh, IconVariable, IconWand, IconX } from '@tabler/icons-react'
 
 // project import
 import { flowContext } from '@/store/context/ReactFlowContext'
+import { ArrayRenderer } from '@/ui-component/array/ArrayRenderer'
 import ConditionDialog from '@/ui-component/dialog/ConditionDialog'
 import ExpandTextDialog from '@/ui-component/dialog/ExpandTextDialog'
 import FormatPromptValuesDialog from '@/ui-component/dialog/FormatPromptValuesDialog'
@@ -49,30 +45,19 @@ import { File } from '@/ui-component/file/File'
 import { DataGrid } from '@/ui-component/grid/DataGrid'
 import { Input } from '@/ui-component/input/Input'
 import { RichInput } from '@/ui-component/input/RichInput'
-import { DataGrid } from '@/ui-component/grid/DataGrid'
-import { File } from '@/ui-component/file/File'
+import { BackdropLoader } from '@/ui-component/loading/BackdropLoader'
 import { SwitchInput } from '@/ui-component/switch/Switch'
 import { Tab } from '@/ui-component/tabs/Tab'
 import { TabPanel } from '@/ui-component/tabs/TabPanel'
 import { TabsList } from '@/ui-component/tabs/TabsList'
-import { ArrayRenderer } from '@/ui-component/array/ArrayRenderer'
-import { Tab } from '@/ui-component/tabs/Tab'
 import { ConfigInput } from '@/views/agentflowsv2/ConfigInput'
-import { BackdropLoader } from '@/ui-component/loading/BackdropLoader'
 import DocStoreInputHandler from '@/views/docstore/DocStoreInputHandler'
 
-import ToolDialog from '@/views/tools/ToolDialog'
-import AssistantDialog from '@/views/assistants/openai/AssistantDialog'
-import FormatPromptValuesDialog from '@/ui-component/dialog/FormatPromptValuesDialog'
-import ExpandTextDialog from '@/ui-component/dialog/ExpandTextDialog'
 import ExpandRichInputDialog from '@/ui-component/dialog/ExpandRichInputDialog'
-import ConditionDialog from '@/ui-component/dialog/ConditionDialog'
-import PromptLangsmithHubDialog from '@/ui-component/dialog/PromptLangsmithHubDialog'
-import ManageScrapedLinksDialog from '@/ui-component/dialog/ManageScrapedLinksDialog'
-import CredentialInputHandler from './CredentialInputHandler'
-import InputHintDialog from '@/ui-component/dialog/InputHintDialog'
-import NvidiaNIMDialog from '@/ui-component/dialog/NvidiaNIMDialog'
 import PromptGeneratorDialog from '@/ui-component/dialog/PromptGeneratorDialog'
+import AssistantDialog from '@/views/assistants/openai/AssistantDialog'
+import ToolDialog from '@/views/tools/ToolDialog'
+import CredentialInputHandler from './CredentialInputHandler'
 
 // API
 import assistantsApi from '@/api/assistants'
@@ -80,17 +65,18 @@ import documentstoreApi from '@/api/documentstore'
 
 // utils
 import {
-    initNode,
-    getInputVariables,
+    getAvailableNodesForVariable,
     getCustomConditionOutputs,
-    isValidConnection,
-    getAvailableNodesForVariable
+    getInputVariables,
+    initNode,
+    isValidConnection
 } from '@/utils/genericHelper'
 import useNotifier from '@/utils/useNotifier'
 
 // const
-import { baseURL, FLOWISE_CREDENTIAL_ID } from '@/store/constant'
 import { closeSnackbar as closeSnackbarAction, enqueueSnackbar as enqueueSnackbarAction } from '@/store/actions'
+import { baseURL, FLOWISE_CREDENTIAL_ID } from '@/store/constant'
+import { JsonEditorInput } from '@/ui-component/json/JsonEditor'
 
 const EDITABLE_OPTIONS = ['selectedTool', 'selectedAssistant']
 
